@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<body>
+
+<div ng-app="myApp" ng-controller="myCtrl"> 
+
+<p>This header counter</p>
+
+<!-- 
+tricky bit of engineering here to get interface to disappear on detonation OR victory -->
+<div ng-hide = "victory">
+<div ng-hide = "detonated">{{counter}}
+<br>
+<button ng-click = "submitGuess(0)">red</button> 
+<button ng-click = "submitGuess(1)">blue</button>
+<button ng-click = "submitGuess(2)">green</button>
+<!-- 
+seals detonated div -->
+</div>
+
+<!-- seals victory div -->
+</div>
+
+
+<h1 ng-show = "detonated">Boom!</h1>
+<h1 ng-show = "victory">Victory!</h1>
+
+<!-- seals controller -->
+</div>
+
+
+
+
+<p>The $timeout service runs a function after a specified number of milliseconds.</p>
+
+<script>
+var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope, $interval, $timeout) {
+  $scope.counter = 60;
+  $scope.detonated = false;
+  $scope.victory = false;
+  // $scope.boom = new Audio("boom.wav");
+  // $scope.correct = Math.floor(Math.random() * 3);
+  $scope.correct = 1;
+
+  $scope.submitGuess = function(guess)
+  {
+  	if (guess == $scope.correct)
+  	{
+  		$scope.victory = true;
+  	}
+  	else
+  	{
+  		$scope.detonated = true;
+  	}
+  }
+
+
+  $interval(function () {
+      $scope.counter = $scope.counter - 1;
+  }, 1000);
+
+  $timeout(function () {
+  	// $scope.boom.play();
+      $scope.detonated = true;
+  }, 10000)
+  //does work because it still subtracts from it, and gets NaN.  
+
+});
+</script>
+
+</body>
+</html>
