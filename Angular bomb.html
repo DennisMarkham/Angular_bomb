@@ -15,19 +15,31 @@
 	font-size: 200%;
 	font-family: digital-7;
 	color: red;
+    border-style: outset;
+    width: 40px;
+    height: 30px;
+    padding: 5px;
+}
+
+#counterSpan
+{
+	float:right;
+	/*see here I just wish I could give it a font where each number has their own distinct
+	territory, so they don't appear to be moving around during the countdown*/
 }
 </style>
 </head>
-<body>
+<body ng-app="myApp" ng-controller="myCtrl">
 
-<div ng-app="myApp" ng-controller="myCtrl"> 
+<div> 
 
-<p>This header counter</p>
+
 
 <!-- 
 tricky bit of engineering here to get interface to disappear on detonation OR victory -->
 <div ng-hide = "victory">
-<div ng-hide = "detonated"><span id = "counter">{{counter}}</span>
+<div ng-hide = "detonated"><div id = "counter"><span id = "counterSpan">0:{{counter}}</span></div>
+<br>
 <br>
 <button ng-click = "submitGuess(0)">red</button> 
 <button ng-click = "submitGuess(1)">blue</button>
@@ -43,8 +55,8 @@ seals detonated div -->
 <h1 ng-show = "detonated">Boom!</h1>
 <h1 ng-show = "victory">Victory!</h1>
 
-<p ng-show = "detonated" ng-click = "reload()">Try again?</p>
-<p ng-show = "victory" ng-click = "reload()">Try again?</p>
+<a ng-show = "detonated" href = {{reload}}>Try again?</a>
+<a ng-show = "victory" href = {{reload}}>Try again?</a>
 <!-- this "try again" should show up whether there is victory or detonation.  But how to bind
 	it to location.reload() or the Angular equivalent? -->
 
@@ -58,7 +70,7 @@ seals detonated div -->
 
 <script>
 var app = angular.module('myApp', []);
-app.controller('myCtrl', function($scope, $interval, $timeout) {
+app.controller('myCtrl', function($scope, $interval, $timeout, $location) {
   
   $scope.counter = 15;
   $scope.detonated = false;
@@ -67,13 +79,14 @@ app.controller('myCtrl', function($scope, $interval, $timeout) {
   $scope.correct = Math.floor(Math.random() * 3);
   //this random selection of correctness seems to work, but I cna't console log it for some 
   //reason.
+  $scope.reload =  $location.absUrl();
 
-  $scope.reload = function()
-  {
-  	console.log("reload function firing");
-  	$window.location.reload();
-  	//not sure how to do this actually
-  }
+  // $scope.reload = function()
+  // {
+  // 	console.log("reload function firing");
+  // 	$window.location.reload();
+  // 	//tried to make the whole body the Angular-JS app.  Didn't hellp
+  // }
 
   $scope.submitGuess = function(guess)
   {
