@@ -1,6 +1,23 @@
 <!DOCTYPE html>
 <html>
+<head>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<style>
+
+ @font-face {
+    font-family: digital-7;
+    src: url(digital-7.ttf);
+}
+
+#counter
+{
+	background-color: black;
+	font-size: 200%;
+	font-family: digital-7;
+	color: red;
+}
+</style>
+</head>
 <body>
 
 <div ng-app="myApp" ng-controller="myCtrl"> 
@@ -10,7 +27,7 @@
 <!-- 
 tricky bit of engineering here to get interface to disappear on detonation OR victory -->
 <div ng-hide = "victory">
-<div ng-hide = "detonated">{{counter}}
+<div ng-hide = "detonated"><span id = "counter">{{counter}}</span>
 <br>
 <button ng-click = "submitGuess(0)">red</button> 
 <button ng-click = "submitGuess(1)">blue</button>
@@ -26,23 +43,37 @@ seals detonated div -->
 <h1 ng-show = "detonated">Boom!</h1>
 <h1 ng-show = "victory">Victory!</h1>
 
+<p ng-show = "detonated" ng-click = "reload()">Try again?</p>
+<p ng-show = "victory" ng-click = "reload()">Try again?</p>
+<!-- this "try again" should show up whether there is victory or detonation.  But how to bind
+	it to location.reload() or the Angular equivalent? -->
+
 <!-- seals controller -->
 </div>
 
 
 
 
-<p>The $timeout service runs a function after a specified number of milliseconds.</p>
+
 
 <script>
 var app = angular.module('myApp', []);
 app.controller('myCtrl', function($scope, $interval, $timeout) {
-  $scope.counter = 60;
+  
+  $scope.counter = 15;
   $scope.detonated = false;
   $scope.victory = false;
   // $scope.boom = new Audio("boom.wav");
-  // $scope.correct = Math.floor(Math.random() * 3);
-  $scope.correct = 1;
+  $scope.correct = Math.floor(Math.random() * 3);
+  //this random selection of correctness seems to work, but I cna't console log it for some 
+  //reason.
+
+  $scope.reload = function()
+  {
+  	console.log("reload function firing");
+  	$window.location.reload();
+  	//not sure how to do this actually
+  }
 
   $scope.submitGuess = function(guess)
   {
@@ -63,9 +94,9 @@ app.controller('myCtrl', function($scope, $interval, $timeout) {
 
   $timeout(function () {
   	// $scope.boom.play();
-      $scope.detonated = true;
-  }, 10000)
-  //does work because it still subtracts from it, and gets NaN.  
+      if ($scope.victory == false) {$scope.detonated = true;}
+  }, $scope.counter * 1000)
+  
 
 });
 </script>
